@@ -1,0 +1,59 @@
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather App</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          .weather { margin-top: 20px; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <h1>Weather App</h1>
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+      
+        <div class="weather">
+          <div id="weatherResult"></div>
+          <div class="error" id="errorMessage"></div>
+        </div>
+      
+        <script>
+          async function getWeather() {
+            const city = document.getElementById('city').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const weatherResult = document.getElementById('weatherResult');
+            
+            if (!city) {
+              errorMessage.textContent = 'Please enter a city name.';
+              weatherResult.textContent = '';
+              return;
+            }
+      
+            try {
+              const response = await fetch(`/weather?city=${city}`);
+              const data = await response.json();
+      
+              if (response.ok) {
+                weatherResult.innerHTML = `
+                  <p>City: ${data.city}, ${data.country}</p>
+                  <p>Temperature: ${data.temperature}°C</p>
+                  <p>Description: ${data.description}</p>
+                  <p>Humidity: ${data.humidity}%</p>
+                  <p>Wind Speed: ${data.windSpeed} m/s</p>
+                `;
+                errorMessage.textContent = '';
+              } else {
+                errorMessage.textContent = data.error || 'Something went wrong. Try again later.';
+                weatherResult.textContent = '';
+              }
+            } catch (error) {
+              errorMessage.textContent = 'Failed to fetch weather data. Please try again.';
+              weatherResult.textContent = '';
+            }
+          }
+        </script>
+      </body>
+      </html>
